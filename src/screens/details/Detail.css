@@ -1,0 +1,147 @@
+.fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.imagecontainer {
+    height: 45%;
+    width: inherit;
+    background-color: lightgray;
+    padding: 0%;
+}
+
+.restaurantimage {
+    height: 65%;
+    width: 25%;
+    top: 30%;
+    bottom: 5%;
+    position: relative;
+    float: left;
+}
+
+.restaurantdetails {
+    height: 65%;
+    width: 75%;
+    top: 30%;
+    position: relative;
+    float: right;
+    flex-wrap: nowrap;
+}
+
+.image {
+    width: 250px;
+    height: 195px;
+    padding: 0 5% 0 10%;
+}
+
+.ratingandpricing {
+    width: 100%;
+}
+
+.rating {
+    width: 50%;
+    line-height:0%;
+    float: left;
+}
+
+.pricing {
+    left: 50%;
+    width: 50%;
+    float: right;
+    line-height:0%;
+}
+
+.helptext {
+    font-size: x-small;
+}
+
+.sellingmenu {
+    height: 55%;
+    top: 10%;
+    width: 100%;
+    background-color: white;
+    display: table;
+}
+
+.menu {
+    width: 50%;
+    padding: 2% 10% 2% 5%;
+    display: table-cell;
+}
+
+.itemlist {
+    width: inhertit;
+    height: inherit;
+}
+
+.itemdetails {
+    float: left;
+    width: 70%;
+}
+
+.pricedetails {
+    float: right;
+    width: 25%;
+    padding-right: 5%;
+    text-align: right;
+}
+
+.cart {
+    width: 50%;
+    height: auto;
+    display: table-cell;
+    padding: 2% 10% 2% 5%;
+}
+
+.cartdetails {
+    width: 90%;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: lightgray;
+}
+
+.menuitem {
+    padding: 0 0 0 2%;
+    justify-content: flex-start;
+}
+
+.rupeesign {
+    padding: 0 0 0 0%;
+}
+
+.menuprice {
+    justify-content: flex-end;
+}
+
+.checkout {
+    width: 95%;
+    left: 1%;
+}
+
+.buttoncontainer {
+    width: 100%;
+}
+
+.cardcontent {
+    width: 90%;
+    padding: 5%;
+}
+
+.carditem {
+    width: 100%;
+}
+
+.carditemname {
+    display: inline-block;
+    width: 50%;
+}
+
+.cardincr {
+    display: inline;
+    width: 30%;
+}
