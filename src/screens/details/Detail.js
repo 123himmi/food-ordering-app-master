@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import history from '../../history';
 import './Detail.css';
 import { Typography } from '@material-ui/core';
 import StarIcon from '@material-ui/icons/Star';
@@ -220,7 +221,7 @@ class Detail extends Component {
                                 <Box style={{ float: "right" }} fontSize="15px" fontWeight="fontWeightBold"><FontAwesomeIcon icon="rupee-sign" /> {this.state.totalamount.toFixed(2)}</Box>
                             </CardContent>
                             <CardActions className="buttoncontainer">
-                                <Button className="checkout" variant="contained" color="primary" size="large">CHECKOUT</Button>
+                                <Button className="checkout" variant="contained" color="primary" size="large" onClick={() => history.push('/checkout')}>CHECKOUT</Button>
                             </CardActions>
                         </Card>
                         <Snackbar

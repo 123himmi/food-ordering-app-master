@@ -47,3 +47,12 @@
 .titlebar {
     background-color: whitesmoke;
 }
+
+.gridtile {
+    border: '1px solid red';
+}
+
+.summarytext {
+    padding: 2% 0 0 5%;
+    width: 50%;
+}

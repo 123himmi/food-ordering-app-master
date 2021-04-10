@@ -10,6 +10,10 @@ import { Step } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Select } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormLabel from '@material-ui/core/FormLabel';
 import './Checkout.css'
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
@@ -68,17 +72,24 @@ TabPanel.propTypes = {
 
 class Checkout extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             loading: false,
             currtab: 'one',
             addresses: {},
             base_url: "http://localhost:8081/api/address/customer",
             states_array: "",
+            paymentMethods: "",
             state_id: "",
             state_selected: false,
-            state_open: false
+            state_open: false,
+            order_address_id: "",
+            address_selected: false,
+            delivery_completed: false,
+            payment_completed: false,
+            payment_method: "",
+            step: 0
         }
     }
 
@@ -93,7 +104,6 @@ class Checkout extends Component {
             if (this.readyState === 4) {
                 varAddresses = JSON.parse(this.responseText);
                 that.setState({ addresses: varAddresses, loading: false });
-                console.log(varAddresses);
             }
         });
         xhr.open("GET", this.state.base_url);
@@ -117,6 +127,33 @@ class Checkout extends Component {
         this.setState({ state_open: false, state_id: event.target.value });
     }
 
+    captureaddress = (addressid) => {
+        this.setState({ order_address_id: addressid });
+    }
+
+    capturePaymentMethod = (e) => {
+        this.setState({payment_method : e.target.value});
+    }
+
+    completeDelivery = () => {
+        if (this.state.order_address_id !== "") {
+            this.setState({ step: 1, delivery_completed: true });
+            this.fetchPayment();
+        }
+    }
+
+    completePayment = () => {
+        if (this.state.payment_method !== "") {
+            this.setState({payment_completed: true, step: -1});
+        }
+    }
+
+    redoSelection = () => {
+        this.setState({step:0, delivery_completed: false, payment_completed: false});
+        console.log(this.state.payment_method);
+        console.log(this.state.order_address_id);
+    }
+
     fetchStates = () => {
         let varStates = "";
         let xhr = new XMLHttpRequest();
@@ -133,6 +170,22 @@ class Checkout extends Component {
         xhr.send(data);
     }
 
+    fetchPayment = () => {
+        let varPayment = "";
+        let xhr = new XMLHttpRequest();
+        let data = null;
+        let that = this;
+        this.setState({ loading: true });
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                varPayment = JSON.parse(this.responseText);
+                that.setState({ paymentMethods: varPayment, loading: false });
+            }
+        });
+        xhr.open("GET", "http://localhost:8081/api/payment");
+        xhr.send(data);
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -142,8 +195,8 @@ class Checkout extends Component {
 
         return (
             <div className="checkoutpage">
-                <Stepper orientation="vertical" className="stepper">
-                    <Step >
+                <Stepper orientation="vertical" className="stepper" activeStep={this.state.step}>
+                    <Step completed={this.state.delivery_completed}>
                         <StepLabel>Delivery</StepLabel>
                         <StepContent>
                             <div>
@@ -156,7 +209,7 @@ class Checkout extends Component {
                                 <TabPanel value={this.state.currtab} index='one' className="tabpanel">
                                     <GridList className="gridlist" cols={3} cellHeight={250}>
                                         {this.state.addresses.addresses.map((address) => (
-                                            <GridListTile classes={{ root: classes.gridtile }} key={address.id} >
+                                            <GridListTile classes={{ root: this.state.order_address_id === address.id && classes.gridtile }} key={address.id} >
                                                 <Typography>{address.flat_building_name}</Typography>
                                                 <Typography>{address.locality}</Typography>
                                                 <Typography>{address.city}</Typography>
@@ -164,8 +217,8 @@ class Checkout extends Component {
                                                 <Typography>{address.pincode}</Typography>
                                                 <GridListTileBar classes={{ root: classes.tilebar, titlePositionBottom: classes.tilebar }}
                                                     actionIcon={
-                                                        <IconButton>
-                                                            <CheckCircleIcon className="iconcolor" />
+                                                        <IconButton onClick={(e) => this.captureaddress(address.id)}>
+                                                            <CheckCircleIcon className={this.state.order_address_id === address.id ? "iconcolor" : ""} />
                                                         </IconButton>
                                                     }
                                                 />
@@ -205,8 +258,8 @@ class Checkout extends Component {
                                         <Input id="pincode" />
                                     </FormControl><br /><br />
                                     <div>
-                                    <Button variant="contained" color="secondary">
-                                        Save Address
+                                        <Button variant="contained" color="secondary">
+                                            Save Address
                                     </Button>
                                     </div>
                                 </TabPanel>
@@ -223,6 +276,7 @@ class Checkout extends Component {
                                         variant="contained"
                                         color="primary"
                                         className={classes.button}
+                                        onClick={this.completeDelivery}
                                     >
                                         Next
                                     </Button>
@@ -230,13 +284,44 @@ class Checkout extends Component {
                             </div>
                         </StepContent>
                     </Step>
-                    <Step className="payment">
+                    <Step className="payment" completed={this.state.payment_completed}>
                         <StepLabel>Payment</StepLabel>
                         <StepContent className="payment">
-                            <div className="payment"></div>
+                            <FormControl component="fieldset">
+                                <FormLabel component="legend">Select Mode of Payment</FormLabel>
+                                <RadioGroup aria-label="paymentmodes" name="paymentmode" value={this.state.payment_method} onChange={this.capturePaymentMethod}>
+                                    {this.state.delivery_completed && this.state.paymentMethods.paymentMethods.map((payment) => (
+                                        <FormControlLabel key={payment.id} value={payment.id} control={<Radio />} label={payment.payment_name} />
+                                    ))}
+                                </RadioGroup>
+                            </FormControl>
+                            <div >
+                                <div>
+                                    <Button
+                                        disabled={false}
+                                        className={classes.button}
+                                    >
+                                        Back
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                        onClick={this.completePayment}
+                                    >
+                                        Finish
+                                    </Button>
+                                </div>
+                            </div>
                         </StepContent>
                     </Step>
                 </Stepper>
+                {this.state.payment_completed &&
+                <div className="summarytext">
+                    <Typography variant="h5">View the summary & place your order now !</Typography><br />
+                    <Button variant="contained" onClick={this.redoSelection}>Change</Button>
+                </div>
+                }
             </div>
         )
     }

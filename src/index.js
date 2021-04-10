@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Detail from './screens/details/Detail';
-import Checkout from './screens/checkout/Checkout';
+import Controller from './Controller';
 
 ReactDOM.render(
-    <Checkout />,
+    <Controller />,
     document.getElementById('root')
 );
 
