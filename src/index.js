@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Detail from './screens/details/Detail';
+import Checkout from './screens/checkout/Checkout';
 
 ReactDOM.render(
-    <Detail />,
+    <Checkout />,
     document.getElementById('root')
 );
 

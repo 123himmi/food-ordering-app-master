@@ -37,7 +37,6 @@ class Detail extends Component {
     }
 
     componentWillMount() {
-        // Get upcoming movies
         let varRestaurantDetails = "";
         let that = this;
         let data = null;
@@ -138,7 +137,7 @@ class Detail extends Component {
             <div className="fullscreen">
                 <div className="imagecontainer">
                     <div className="restaurantimage">
-                        <img className="image" src={this.state.restaurantDetails.photo_URL} alt="Resaurant Image" />
+                        <img className="image" src={this.state.restaurantDetails.photo_URL}/>
                     </div>
                     <div className="restaurantdetails">
                         <Typography variant="h5">{this.state.restaurantDetails.restaurant_name}</Typography><br />

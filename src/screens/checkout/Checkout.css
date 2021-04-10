@@ -1,0 +1,49 @@
+.checkoutpage {
+    padding: 5% 0 0 0;
+    height: 95%;
+    width: 100%;
+}
+
+.delivery {
+    height: 50%;
+}
+
+.payment {
+    height: 50%;
+}
+
+.gridlist {
+    flex-grow:1;
+    display: flex;
+    overflow: auto;
+    max-width: 100%;
+}
+
+.tabs {
+    flex-grow: 1;
+    background-color: whitesmoke;
+}
+
+.stepper {
+    width: 60%;
+}
+
+.tabpanel {
+    display: inline;
+    flex-wrap: wrap;
+    overflow: hidden;
+    width: 100%;
+}
+
+.iconcolor {
+    color: green;
+}
+
+.MuiGridListTileBar-titlePositionBottom {
+    bottom: 0;
+    background-color: white;
+}
+
+.titlebar {
+    background-color: whitesmoke;
+}
