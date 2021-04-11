@@ -10,6 +10,8 @@ import { Step } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { Select } from '@material-ui/core';
 import { MenuItem } from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
+import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -17,6 +19,13 @@ import FormLabel from '@material-ui/core/FormLabel';
 import './Checkout.css'
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle } from '@fortawesome/fontawesome-free-solid';
+import { faStopCircle } from '@fortawesome/fontawesome-free-solid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
@@ -24,6 +33,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { withStyles } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios';
+import { ThreeSixtySharp, TimerSharp } from '@material-ui/icons';
 
 const styles = {
     tilebar: {
@@ -93,7 +104,10 @@ class Checkout extends Component {
             new_flat_number: "",
             new_locality: "",
             new_city: "",
-            new_pincode: 0
+            new_pincode: 0,
+            netamount: 0,
+            order_message:"",
+            order_id:""
         }
     }
 
@@ -112,13 +126,16 @@ class Checkout extends Component {
         });
         xhr.open("GET", this.props.baseUrl + this.state.base_url);
         xhr.setRequestHeader("Cache-Control", "no-cache");
-        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiIzMzMzN2MxNi0zOTcxLTQzZjMtYmZiOS1kNmQ4YjA0Mjk5Y2IiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODExMSwiaWF0IjoxNjE4MDgyfQ.bOEzMiK5aFGRXC4h_w3GbYhIjTky75cn7tPyLRgq1MOC70sG2OZdr0-NZ3heqV0fhKzkPMGN2eIov5sEwI21dQ");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ");
         xhr.send(data);
     }
 
     componentDidMount() {
         console.log(this.props.location.state.cartitems);
         console.log(this.props.location.state.restaurant_name);
+        console.log(this.props.location.state.restaurant_id);
+        console.log(this.props.location.state.totalamount);
+        this.setState({ netamount: this.props.location.state.totalamount });
     }
 
     a11yProps(index) {
@@ -179,6 +196,43 @@ class Checkout extends Component {
         console.log(this.state.order_address_id);
     }
 
+    postOrder (ordermsg) {
+        const headers = {
+            'Authorization': 'Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ'
+        }
+        axios.post(this.props.baseUrl+"order", ordermsg, {headers})
+             .then(response => this.setState({order_id:response, loading:false}));
+    }
+
+    placeOrder = () => {
+        let itemArray = [];
+        this.props.location.state.cartitems.forEach(item => {
+            itemArray.push({"item_id":item.id,"price":item.price,"quantity": item.item_count});
+        });
+        let ordermsg = {"address_id":this.state.order_address_id, 
+                        "bill":this.props.location.state.totalamount,
+                        "coupon_id":"", 
+                        "discount":0, 
+                        "item_quantities": itemArray,
+                        "payment_id": this.state.payment_method, 
+                        "restaurant_id": this.props.location.state.restaurant_id
+                    };
+        let xhr = new XMLHttpRequest();
+        let that = this;
+        this.setState({loading:true});
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                let res = JSON.parse(this.responseText);
+                that.setState({order_id:res, loading:false });
+            }
+        });
+        xhr.open("POST", this.props.baseUrl + "order", false);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ");
+        xhr.send(JSON.stringify(ordermsg));
+        console.log(this.state.order_id);
+    }
+
     fetchStates = () => {
         let varStates = "";
         let xhr = new XMLHttpRequest();
@@ -213,9 +267,10 @@ class Checkout extends Component {
 
     render() {
         const { classes } = this.props;
+        const orderamount = this.props.location.state.totalamount;
 
         if (this.state.loading) {
-            return (<div>Loading....</div>)
+            return (<div className="loader"></div>)
         }
 
         return (
@@ -345,6 +400,43 @@ class Checkout extends Component {
                         </StepContent>
                     </Step>
                 </Stepper>
+                <div className="ordersummary">
+                    <Card>
+                        <CardHeader
+                            titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
+                            title="Summary"
+                        />
+                        <div className="cardcontent">
+                            {this.props.location.state.cartitems.map(item => (
+                                <div className="carditem" key={item.id}>
+                                    <div className="carditemname">
+                                        <Typography variant="caption" style={{ textTransform: 'capitalize' }}><FontAwesomeIcon icon={faStopCircle} color={item.item_type === "NON_VEG" ? "red" : "green"} /> {item.item_name}  </Typography>
+                                    </div>
+                                    <div component="div" className="cardincr">
+                                        <Typography align="right" variant="caption" style={{ display: "inline", padding: "0 0 0 30px" }} >{item.item_count}</Typography>
+                                    </div>
+                                    <div style={{ display: "inline", float: "right" }} ><FontAwesomeIcon icon="rupee-sign" /> {(item.item_count * item.price).toFixed(2)}</div>
+                                </div>))}
+                            {this.props.location.state.cartitems.length > 0 && 
+                            <div className="coupon">
+                                <div className="coupontext">
+                                    <TextField id="filled-basic" label="Coupon Code" placeholder="Ex. FLAT30" variant="filled" />
+                                </div>
+                                <div className="couponbutton">
+                                    <Button variant="contained">APPLY</Button>
+                                </div>
+                            </div>}
+                        </div>
+                        <Divider />
+                        <CardContent>
+                            <Box style={{ float: "left" }} fontSize="15px" fontWeight="fontWeightBold">NET AMOUNT</Box>
+                            <Box style={{ float: "right" }} fontSize="15px" fontWeight="fontWeightBold"><FontAwesomeIcon icon="rupee-sign" />{orderamount.toFixed(2)}</Box>
+                        </CardContent>
+                        <CardActions className="buttoncontainer">
+                            <Button className="checkout" variant="contained" color="primary" size="large" onClick={this.placeOrder}>PLACE ORDER</Button>
+                        </CardActions>
+                    </Card>
+                </div>
                 {this.state.payment_completed &&
                     <div className="summarytext">
                         <Typography variant="h5">View the summary & place your order now !</Typography><br />

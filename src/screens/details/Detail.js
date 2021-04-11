@@ -131,7 +131,7 @@ class Detail extends Component {
 
     render() {
         if (this.state.loading) {
-            return (<div>Loading....</div>)
+            return (<div className="loader"></div>)
         }
 
         return (
@@ -221,7 +221,7 @@ class Detail extends Component {
                                 <Box style={{ float: "right" }} fontSize="15px" fontWeight="fontWeightBold"><FontAwesomeIcon icon="rupee-sign" /> {this.state.totalamount.toFixed(2)}</Box>
                             </CardContent>
                             <CardActions className="buttoncontainer">
-                                <Button className="checkout" variant="contained" color="primary" size="large" onClick={() => history.push({pathname:'/checkout', state:{cartitems:this.state.cartitems, restaurant_name: this.state.restaurantDetails.restaurant_name}})}>CHECKOUT</Button>
+                                <Button className="checkout" variant="contained" color="primary" size="large" onClick={() => history.push({pathname:'/checkout', state:{cartitems:this.state.cartitems, restaurant_name: this.state.restaurantDetails.restaurant_name, restaurant_id:this.state.restaurantDetails.id, totalamount: this.state.totalamount}})}>CHECKOUT</Button>
                             </CardActions>
                         </Card>
                         <Snackbar
