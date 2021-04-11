@@ -22,11 +22,11 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 class Detail extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             restaurantDetails: {},
-            base_url: "http://localhost:8081/api/restaurant/1dd86f90-a296-11e8-9a3a-720006ceb890",
+            base_url: "restaurant/1dd86f90-a296-11e8-9a3a-720006ceb890",
             loading: false,
             cartitemscount: 0,
             cartitems: [],
@@ -49,7 +49,7 @@ class Detail extends Component {
                 that.setState({ restaurantDetails: varRestaurantDetails, loading: false });
             }
         });
-        xhr.open("GET", this.state.base_url);
+        xhr.open("GET", this.props.baseUrl+this.state.base_url);
         xhr.setRequestHeader("Cache-Control", "no-cache");
         xhr.send(data);
     }
@@ -169,11 +169,11 @@ class Detail extends Component {
                 <div className="sellingmenu">
                     <div className="menu">
                         {this.state.restaurantDetails.categories.sort((a, b) => (a.category_name > b.category_name) ? 1 : -1).map(category => (
-                            <div className="itemlist">
+                            <div className="itemlist" key={category.id}>
                                 <Typography variant="caption" style={{ textTransform: 'uppercase' }} >{category.category_name}</Typography>
                                 <hr style={{ color: "white", marginRight: 20 }} />
                                 {category.item_list.map(item => (
-                                    <div className="itemline">
+                                    <div className="itemline" key={item.id}>
                                         <div className="itemdetails">
                                             <Typography className="menuitem" variant="caption" style={{ textTransform: 'capitalize' }}><FontAwesomeIcon style={{ padding: "0 10px 0 0" }} color={item.item_type === "NON_VEG" ? "red" : "green"} icon={faCircle} />   {item.item_name}</Typography>
                                         </div>
@@ -200,7 +200,7 @@ class Detail extends Component {
                             />
                             <div className="cardcontent">
                                 {this.state.cartitems.map(item => (
-                                    <div className="carditem">
+                                    <div className="carditem" key={item.id}>
                                         <div className="carditemname">
                                             <Typography variant="caption" style={{ textTransform: 'capitalize' }}><FontAwesomeIcon icon={faStopCircle} color={item.item_type === "NON_VEG" ? "red" : "green"} /> {item.item_name}  </Typography>
                                         </div>
@@ -221,7 +221,7 @@ class Detail extends Component {
                                 <Box style={{ float: "right" }} fontSize="15px" fontWeight="fontWeightBold"><FontAwesomeIcon icon="rupee-sign" /> {this.state.totalamount.toFixed(2)}</Box>
                             </CardContent>
                             <CardActions className="buttoncontainer">
-                                <Button className="checkout" variant="contained" color="primary" size="large" onClick={() => history.push('/checkout')}>CHECKOUT</Button>
+                                <Button className="checkout" variant="contained" color="primary" size="large" onClick={() => history.push({pathname:'/checkout', state:{cartitems:this.state.cartitems, restaurant_name: this.state.restaurantDetails.restaurant_name}})}>CHECKOUT</Button>
                             </CardActions>
                         </Card>
                         <Snackbar

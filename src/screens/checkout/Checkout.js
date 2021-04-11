@@ -57,7 +57,7 @@ function TabPanel(props) {
         >
             {value === index && (
                 <Box p={2}>
-                    <Typography>{children}</Typography>
+                    <Box>{children}</Box>
                 </Box>
             )}
         </div>
@@ -78,7 +78,7 @@ class Checkout extends Component {
             loading: false,
             currtab: 'one',
             addresses: {},
-            base_url: "http://localhost:8081/api/address/customer",
+            base_url: "address/customer",
             states_array: "",
             paymentMethods: "",
             state_id: "",
@@ -89,7 +89,11 @@ class Checkout extends Component {
             delivery_completed: false,
             payment_completed: false,
             payment_method: "",
-            step: 0
+            step: 0,
+            new_flat_number: "",
+            new_locality: "",
+            new_city: "",
+            new_pincode: 0
         }
     }
 
@@ -106,10 +110,15 @@ class Checkout extends Component {
                 that.setState({ addresses: varAddresses, loading: false });
             }
         });
-        xhr.open("GET", this.state.base_url);
+        xhr.open("GET", this.props.baseUrl + this.state.base_url);
         xhr.setRequestHeader("Cache-Control", "no-cache");
-        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJiZjk5OTRjZC05OWI5LTRlZDYtYjlhYy0yM2JhZGExNjQ2ZDQiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODA4MiwiaWF0IjoxNjE4MDUzfQ.DGr5-fRhgKFm2R2n6rnkLG9NVtSxu9GRfgs4jY62XyW3RNsBqUINYTDrjZ9f6rURd9fmThVFDEvPJ9UjhSERdw");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiIzMzMzN2MxNi0zOTcxLTQzZjMtYmZiOS1kNmQ4YjA0Mjk5Y2IiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODExMSwiaWF0IjoxNjE4MDgyfQ.bOEzMiK5aFGRXC4h_w3GbYhIjTky75cn7tPyLRgq1MOC70sG2OZdr0-NZ3heqV0fhKzkPMGN2eIov5sEwI21dQ");
         xhr.send(data);
+    }
+
+    componentDidMount() {
+        console.log(this.props.location.state.cartitems);
+        console.log(this.props.location.state.restaurant_name);
     }
 
     a11yProps(index) {
@@ -132,7 +141,23 @@ class Checkout extends Component {
     }
 
     capturePaymentMethod = (e) => {
-        this.setState({payment_method : e.target.value});
+        this.setState({ payment_method: e.target.value });
+    }
+
+    captureFlatNumber = (e) => {
+        this.setState({ new_flat_number: e.target.value });
+    }
+
+    captureLocality = (e) => {
+        this.setState({ new_locality: e.target.value });
+    }
+
+    captureCity = (e) => {
+        this.setState({ new_city: e.target.value });
+    }
+
+    capturePincode = (e) => {
+        this.setState({ new_pincode: e.target.value });
     }
 
     completeDelivery = () => {
@@ -144,12 +169,12 @@ class Checkout extends Component {
 
     completePayment = () => {
         if (this.state.payment_method !== "") {
-            this.setState({payment_completed: true, step: -1});
+            this.setState({ payment_completed: true, step: -1 });
         }
     }
 
     redoSelection = () => {
-        this.setState({step:0, delivery_completed: false, payment_completed: false});
+        this.setState({ step: 0, delivery_completed: false, payment_completed: false });
         console.log(this.state.payment_method);
         console.log(this.state.order_address_id);
     }
@@ -166,7 +191,7 @@ class Checkout extends Component {
                 that.setState({ states_array: varStates, loading: false, state_selected: true, state_open: true });
             }
         });
-        xhr.open("GET", "http://localhost:8081/api/states");
+        xhr.open("GET", this.props.baseUrl + "states");
         xhr.send(data);
     }
 
@@ -182,7 +207,7 @@ class Checkout extends Component {
                 that.setState({ paymentMethods: varPayment, loading: false });
             }
         });
-        xhr.open("GET", "http://localhost:8081/api/payment");
+        xhr.open("GET", this.props.baseUrl + "payment");
         xhr.send(data);
     }
 
@@ -227,21 +252,23 @@ class Checkout extends Component {
                                     </GridList>
                                 </TabPanel>
                                 <TabPanel value={this.state.currtab} index='two'>
-                                    <FormControl className={classes.formControl} >
-                                        <InputLabel htmlFor="flat_building_number" required={true}>Flat / Building No.</InputLabel>
-                                        <Input id="flat_building_number" />
-                                        <FormHelperText classes={{ root: classes.helptext }}></FormHelperText>
+                                    <FormControl className={classes.formControl} required>
+                                        <InputLabel htmlFor="flat_building_number" >Flat / Building No.</InputLabel>
+                                        <Input id="flat_building_number" flat_building_number={this.state.new_flat_number} onChange={this.captureFlatNumber} />
+                                        <FormHelperText classes={{ root: classes.helptext }}>required</FormHelperText>
                                     </FormControl><br /><br />
-                                    <FormControl className={classes.formControl}>
-                                        <InputLabel htmlFor="locality" required={true}>Locality</InputLabel>
-                                        <Input id="locality" />
+                                    <FormControl className={classes.formControl} required>
+                                        <InputLabel htmlFor="locality" >Locality</InputLabel>
+                                        <Input id="locality" locality={this.state.new_locality} onChange={this.captureLocality} />
+                                        <FormHelperText classes={{ root: classes.helptext }}>required</FormHelperText>
                                     </FormControl><br /><br />
-                                    <FormControl className={classes.formControl}>
-                                        <InputLabel htmlFor="city" required={true}>City</InputLabel>
-                                        <Input id="city" />
+                                    <FormControl className={classes.formControl} required>
+                                        <InputLabel htmlFor="city" >City</InputLabel>
+                                        <Input id="city" city={this.state.new_city} onChange={this.captureCity} />
+                                        <FormHelperText classes={{ root: classes.helptext }}>required</FormHelperText>
                                     </FormControl><br /><br />
-                                    <FormControl className={classes.formControl}>
-                                        <InputLabel htmlFor="state" required={true}>State</InputLabel>
+                                    <FormControl className={classes.formControl} required>
+                                        <InputLabel htmlFor="state" >State</InputLabel>
                                         <Select open={this.state.state_open}
                                             value={this.state.state_id}
                                             onOpen={this.fetchStates}
@@ -252,15 +279,17 @@ class Checkout extends Component {
                                                 <MenuItem id={state_i.id} value={state_i.state_name}>{state_i.state_name}</MenuItem>
                                             ))}
                                         </Select>
+                                        <FormHelperText classes={{ root: classes.helptext }}>required</FormHelperText>
                                     </FormControl><br /><br />
-                                    <FormControl>
-                                        <InputLabel htmlFor="pincode" required={true}>Pincode</InputLabel>
-                                        <Input id="pincode" />
+                                    <FormControl required>
+                                        <InputLabel htmlFor="pincode" >Pincode</InputLabel>
+                                        <Input id="pincode" pincode={this.state.new_pincode} onChange={this.capturePincode} />
+                                        <FormHelperText classes={{ root: classes.helptext }}>required</FormHelperText>
                                     </FormControl><br /><br />
                                     <div>
                                         <Button variant="contained" color="secondary">
                                             Save Address
-                                    </Button>
+                                        </Button>
                                     </div>
                                 </TabPanel>
                             </div>
@@ -317,10 +346,10 @@ class Checkout extends Component {
                     </Step>
                 </Stepper>
                 {this.state.payment_completed &&
-                <div className="summarytext">
-                    <Typography variant="h5">View the summary & place your order now !</Typography><br />
-                    <Button variant="contained" onClick={this.redoSelection}>Change</Button>
-                </div>
+                    <div className="summarytext">
+                        <Typography variant="h5">View the summary & place your order now !</Typography><br />
+                        <Button variant="contained" onClick={this.redoSelection}>Change</Button>
+                    </div>
                 }
             </div>
         )
