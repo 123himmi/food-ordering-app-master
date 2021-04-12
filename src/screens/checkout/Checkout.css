@@ -1,0 +1,146 @@
+.checkoutpage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.delivery {
+    height: 50%;
+}
+
+.payment {
+    height: 50%;
+}
+
+/*
+.gridlist {
+    display: flex;
+    overflow: auto;
+    max-width: 200%;
+    flex-direction: row;
+}*/
+
+.tabs {
+    flex-grow: 1;
+    background-color: whitesmoke;
+}
+
+.stepper {
+    width: 70%;
+    float: left;
+}
+
+.tabpanel {
+    display: inline;
+    flex-wrap: wrap;
+    overflow: hidden;
+    width: 100%;
+}
+
+.iconcolor {
+    color: green;
+}
+
+.MuiGridListTileBar-titlePositionBottom {
+    bottom: 0;
+    background-color: white;
+}
+
+.titlebar {
+    background-color: whitesmoke;
+}
+
+.gridtile {
+    border: '1px solid red';
+}
+
+.summarytext {
+    padding: 2% 0 0 5%;
+    width: 50%;
+}
+
+.ordersummary {
+    width : 25%;
+    float: right;
+    padding-right: 1%;
+
+}
+
+.buttoncontainer {
+    width: 100%;
+}
+
+.cardincr {
+    display: inline;
+    width: 30%;
+    justify-content: flex-end;
+}
+
+.coupon {
+    display: inline-block;
+    width: 100%;
+}
+
+.couponbutton {
+    float: right;
+}
+
+.coupontext {
+    float: left;
+    width: 50%;
+}
+
+.carditem {
+    width: 100%;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    margin:auto;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    position:fixed;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  ::-webkit-scrollbar {
+    height: 0.5em;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
