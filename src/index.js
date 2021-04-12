@@ -5,7 +5,7 @@ import Controller from './Controller';
 import Header from './common/header/Header';
 
 ReactDOM.render(
-    <Header />,
+    <Controller />,
     document.getElementById('root')
 );
 

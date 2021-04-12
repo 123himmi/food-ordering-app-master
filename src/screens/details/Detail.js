@@ -137,7 +137,7 @@ class Detail extends Component {
 
         return (
             <div className="fullscreen">
-                <Header />
+                <Header baseUrl={this.props.baseUrl} />
                 <div className="imagecontainer">
                     <div className="restaurantimage">
                         <img className="image" src={this.state.restaurantDetails.photo_URL}/>
