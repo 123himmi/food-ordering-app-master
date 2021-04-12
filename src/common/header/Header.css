@@ -2,7 +2,7 @@
 .header-main-container {
   background-color: #263238;
   padding: 16px;
-  /*margin-bottom: 16px;*/
+  margin-bottom: 16px;
   display: flex;
 justify-content: space-between;
 flex-wrap: wrap;

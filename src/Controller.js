@@ -4,12 +4,14 @@ import Home from './screens/home/Home';
 import Detail from './screens/details/Detail';
 import Checkout from './screens/checkout/Checkout';
 import history from './history';
+import Profile from "./screens/profile/Profile";
+
 
 export default class Controller extends Component {
 
     constructor() {
         super();
-        this.baseUrl = "http://localhost:8081/api/";
+        this.baseUrl = "http://localhost:8080/api/";
       }
 
       render() {
@@ -19,6 +21,7 @@ export default class Controller extends Component {
                     <Route exact path="/" render={props=> <Home {...props} baseUrl={this.baseUrl}/>} />
                     <Route path="/detail" render={(props) => <Detail {...props} baseUrl={this.baseUrl} />} />
                     <Route path="/checkout" render={(props) => <Checkout {...props} baseUrl={this.baseUrl} />} />
+                    <Route exact path="/profile" render={props=> <Profile {...props} baseUrl={this.baseUrl}/>}/>                    
                 </Switch>
             </Router>
         )
