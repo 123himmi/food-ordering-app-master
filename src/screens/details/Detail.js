@@ -130,6 +130,14 @@ class Detail extends Component {
         this.setState({ openstatus: false });
     }
 
+    loginredirect = () => {
+        sessionStorage.clear();
+        this.props.history.push({
+            pathname: "/"
+        });
+        window.location.reload();
+    }
+
     render() {
         if (this.state.loading) {
             return (<div className="loader"></div>)
@@ -137,7 +145,7 @@ class Detail extends Component {
 
         return (
             <div className="fullscreen">
-                <Header baseUrl={this.props.baseUrl} />
+                <Header baseUrl={this.props.baseUrl} logoutHandler={this.loginredirect}/>
                 <div className="imagecontainer">
                     <div className="restaurantimage">
                         <img className="image" src={this.state.restaurantDetails.photo_URL}/>
