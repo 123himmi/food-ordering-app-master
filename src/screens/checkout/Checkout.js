@@ -24,7 +24,6 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/fontawesome-free-solid';
 import { faStopCircle } from '@fortawesome/fontawesome-free-solid';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
@@ -32,9 +31,8 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { withStyles } from '@material-ui/core/styles';
-import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
-import { ThreeSixtySharp, TimerSharp } from '@material-ui/icons';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = {
     tilebar: {
@@ -106,8 +104,12 @@ class Checkout extends Component {
             new_city: "",
             new_pincode: 0,
             netamount: 0,
-            order_message:"",
-            order_id:""
+            order_message: "",
+            order_id: "",
+            order_complete: false,
+            order_status: false,
+            openstatus: false,
+            order_error: false
         }
     }
 
@@ -126,7 +128,7 @@ class Checkout extends Component {
         });
         xhr.open("GET", this.props.baseUrl + this.state.base_url);
         xhr.setRequestHeader("Cache-Control", "no-cache");
-        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiI3NGZlMDdkZC0wMzA3LTQzOGYtODM0Ny03MDVmNjE5MzJmZjciLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODIyMSwiaWF0IjoxNjE4MTkyfQ.QygSzaJCXf443_MSdci4dHt-3xwGOfdP4HJAcEw4hClzlbRplmQBok9i7vTlgWg6KV3i5mMSIajkalv9Qp4kUg");
         xhr.send(data);
     }
 
@@ -196,41 +198,43 @@ class Checkout extends Component {
         console.log(this.state.order_address_id);
     }
 
-    postOrder (ordermsg) {
-        const headers = {
-            'Authorization': 'Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ'
-        }
-        axios.post(this.props.baseUrl+"order", ordermsg, {headers})
-             .then(response => this.setState({order_id:response, loading:false}));
+    handleClose = () => {
+        this.setState({ openstatus: false });
     }
 
     placeOrder = () => {
         let itemArray = [];
         this.props.location.state.cartitems.forEach(item => {
-            itemArray.push({"item_id":item.id,"price":item.price,"quantity": item.item_count});
+            itemArray.push({ "item_id": item.id, "price": item.price, "quantity": item.item_count });
         });
-        let ordermsg = {"address_id":this.state.order_address_id, 
-                        "bill":this.props.location.state.totalamount,
-                        "coupon_id":"", 
-                        "discount":0, 
-                        "item_quantities": itemArray,
-                        "payment_id": this.state.payment_method, 
-                        "restaurant_id": this.props.location.state.restaurant_id
-                    };
+        let ordermsg = {
+            "address_id": this.state.order_address_id,
+            "bill": this.props.location.state.totalamount,
+            "coupon_id": "",
+            "discount": 0,
+            "item_quantities": itemArray,
+            "payment_id": this.state.payment_method,
+            "restaurant_id": this.props.location.state.restaurant_id
+        };
         let xhr = new XMLHttpRequest();
         let that = this;
-        this.setState({loading:true});
+        this.setState({ loading: true });
         xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4) {
-                let res = JSON.parse(this.responseText);
-                that.setState({order_id:res, loading:false });
+            if (this.readyState === 4 && (this.status === 200 || this.status == 201)) {
+                if (this.status === 200 || this.status === 201) {
+                    let res = JSON.parse(this.responseText);
+                    console.log(res);
+                    that.setState({ order_id: res.id, loading: false, order_complete: true, openstatus: true });
+                } else { 
+                    that.setState({loading: false, order_complete: true, openstatus: true, order_error: true});
+                }
             }
         });
-        xhr.open("POST", this.props.baseUrl + "order", false);
+        xhr.open("POST", this.props.baseUrl + "order");
+        xhr.timeout = 5;
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJlNmE0NmZiOC02OTgwLTQ0ODktYjQ0Zi01ZDdiN2NhZmY3YTgiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODE4NSwiaWF0IjoxNjE4MTU2fQ.5gKmyHarCNhJdw6SdZF7caq9DdgyDsH0TzmQsztlGlTz22dOr0frEVwW_PTmlQwk_9skyOgNAhBNOV-FhWSgdQ");
+        xhr.setRequestHeader("Authorization", "Bearer yJraWQiOiI3NGZlMDdkZC0wMzA3LTQzOGYtODM0Ny03MDVmNjE5MzJmZjciLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODIyMSwiaWF0IjoxNjE4MTkyfQ.QygSzaJCXf443_MSdci4dHt-3xwGOfdP4HJAcEw4hClzlbRplmQBok9i7vTlgWg6KV3i5mMSIajkalv9Qp4kUg");
         xhr.send(JSON.stringify(ordermsg));
-        console.log(this.state.order_id);
     }
 
     fetchStates = () => {
@@ -417,15 +421,15 @@ class Checkout extends Component {
                                     </div>
                                     <div style={{ display: "inline", float: "right" }} ><FontAwesomeIcon icon="rupee-sign" /> {(item.item_count * item.price).toFixed(2)}</div>
                                 </div>))}
-                            {this.props.location.state.cartitems.length > 0 && 
-                            <div className="coupon">
-                                <div className="coupontext">
-                                    <TextField id="filled-basic" label="Coupon Code" placeholder="Ex. FLAT30" variant="filled" />
-                                </div>
-                                <div className="couponbutton">
-                                    <Button variant="contained">APPLY</Button>
-                                </div>
-                            </div>}
+                            {this.props.location.state.cartitems.length > 0 &&
+                                <div className="coupon">
+                                    <div className="coupontext">
+                                        <TextField id="filled-basic" label="Coupon Code" placeholder="Ex. FLAT30" variant="filled" />
+                                    </div>
+                                    <div className="couponbutton">
+                                        <Button variant="contained">APPLY</Button>
+                                    </div>
+                                </div>}
                         </div>
                         <Divider />
                         <CardContent>
@@ -443,6 +447,20 @@ class Checkout extends Component {
                         <Button variant="contained" onClick={this.redoSelection}>Change</Button>
                     </div>
                 }
+                {this.state.order_complete && <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                    open={this.state.openstatus}
+                    onClose={(e) => this.handleClose()}
+                    message={this.state.order_error === true ? "Unable to place your order! Please try again !" : "Order placed successfully. Your order id is " + this.state.order_id + "!"}
+                    autoHideDuration="4000"
+                    action={
+                        <React.Fragment>
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={(e) => this.handleClose()}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        </React.Fragment>
+                    }
+                />}
             </div>
         )
     }
