@@ -27,7 +27,6 @@ class Detail extends Component {
         super(props);
         this.state = {
             restaurantDetails: {},
-            base_url: "restaurant/1dd86f90-a296-11e8-9a3a-720006ceb890",
             loading: false,
             cartitemscount: 0,
             cartitems: [],
@@ -50,9 +49,10 @@ class Detail extends Component {
                 that.setState({ restaurantDetails: varRestaurantDetails, loading: false });
             }
         });
-        xhr.open("GET", this.props.baseUrl+this.state.base_url);
+        xhr.open("GET", this.props.baseUrl+"restaurant/"+this.props.match.params.restaurantid);
         xhr.setRequestHeader("Cache-Control", "no-cache");
         xhr.send(data);
+        console.log(this.props.match.params.restaurantid);
     }
 
     addItemsToCart = (item) => {
