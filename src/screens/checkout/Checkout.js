@@ -34,6 +34,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
 import Header from '../../common/header/Header';
+import history from '../../history';
 
 const styles = {
     tilebar: {
@@ -269,8 +270,11 @@ class Checkout extends Component {
     }
 
     render() {
+        
         const { classes } = this.props;
         const orderamount = this.props.location.state.totalamount;
+
+        console.log(this.props.location);
 
         if (this.state.loading) {
             return (<div className="loader"></div>)
