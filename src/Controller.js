@@ -19,9 +19,9 @@ export default class Controller extends Component {
             <Router history={history}>
                 <Switch>
                     <Route exact path="/" render={props=> <Home {...props} baseUrl={this.baseUrl}/>} />
-                    <Route path="/detail" render={(props) => <Detail {...props} baseUrl={this.baseUrl} />} />
+                    <Route path="/restaurant/:restaurantid" render={(props) => <Detail {...props} baseUrl={this.baseUrl} />} />
                     <Route path="/checkout" render={(props) => <Checkout {...props} baseUrl={this.baseUrl} />} />
-                    <Route exact path="/profile" render={props=> <Profile {...props} baseUrl={this.baseUrl}/>}/>                    
+                    <Route path="/profile" render={props=> <Profile {...props} baseUrl={this.baseUrl}/>}/>                    
                 </Switch>
             </Router>
         )
