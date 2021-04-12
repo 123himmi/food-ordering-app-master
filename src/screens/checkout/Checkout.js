@@ -128,7 +128,7 @@ class Checkout extends Component {
         });
         xhr.open("GET", this.props.baseUrl + this.state.base_url);
         xhr.setRequestHeader("Cache-Control", "no-cache");
-        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiI3NGZlMDdkZC0wMzA3LTQzOGYtODM0Ny03MDVmNjE5MzJmZjciLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODIyMSwiaWF0IjoxNjE4MTkyfQ.QygSzaJCXf443_MSdci4dHt-3xwGOfdP4HJAcEw4hClzlbRplmQBok9i7vTlgWg6KV3i5mMSIajkalv9Qp4kUg");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJhZGQ4N2Y2MS1kNTA5LTQyYjEtYjFhYy0wNzNkYTI1ODM1YzkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODI1MiwiaWF0IjoxNjE4MjIzfQ.zHL4st5QzCdluaQTLnNPZ_AbDW67dCV2n2ZvfptXjCcLlLZc3GMrjEt76ID1U4_J3X_ddvR6sKfkzEM6e0NFkw");
         xhr.send(data);
     }
 
@@ -233,7 +233,7 @@ class Checkout extends Component {
         xhr.open("POST", this.props.baseUrl + "order");
         xhr.timeout = 5;
         xhr.setRequestHeader("Content-type", "application/json");
-        xhr.setRequestHeader("Authorization", "Bearer yJraWQiOiI3NGZlMDdkZC0wMzA3LTQzOGYtODM0Ny03MDVmNjE5MzJmZjciLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODIyMSwiaWF0IjoxNjE4MTkyfQ.QygSzaJCXf443_MSdci4dHt-3xwGOfdP4HJAcEw4hClzlbRplmQBok9i7vTlgWg6KV3i5mMSIajkalv9Qp4kUg");
+        xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJhZGQ4N2Y2MS1kNTA5LTQyYjEtYjFhYy0wNzNkYTI1ODM1YzkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODI1MiwiaWF0IjoxNjE4MjIzfQ.zHL4st5QzCdluaQTLnNPZ_AbDW67dCV2n2ZvfptXjCcLlLZc3GMrjEt76ID1U4_J3X_ddvR6sKfkzEM6e0NFkw");
         xhr.send(JSON.stringify(ordermsg));
     }
 
