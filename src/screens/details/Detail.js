@@ -19,6 +19,7 @@ import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import Box from '@material-ui/core/Box';
 import Snackbar from '@material-ui/core/Snackbar';
+import Header from '../../common/header/Header';
 
 class Detail extends Component {
 
@@ -136,6 +137,7 @@ class Detail extends Component {
 
         return (
             <div className="fullscreen">
+                <Header />
                 <div className="imagecontainer">
                     <div className="restaurantimage">
                         <img className="image" src={this.state.restaurantDetails.photo_URL}/>

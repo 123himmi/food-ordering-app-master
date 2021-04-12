@@ -33,6 +33,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { withStyles } from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
+import Header from '../../common/header/Header';
 
 const styles = {
     tilebar: {
@@ -50,7 +51,11 @@ const styles = {
     },
     helptext: {
         color: "red"
-    }
+    },
+    gridlist : {
+        flexWrap: 'nowrap',
+        transform: 'translateZ(0)'
+    }    
 };
 
 function TabPanel(props) {
@@ -133,11 +138,6 @@ class Checkout extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.location.state.cartitems);
-        console.log(this.props.location.state.restaurant_name);
-        console.log(this.props.location.state.restaurant_id);
-        console.log(this.props.location.state.totalamount);
-        this.setState({ netamount: this.props.location.state.totalamount });
     }
 
     a11yProps(index) {
@@ -220,7 +220,7 @@ class Checkout extends Component {
         let that = this;
         this.setState({ loading: true });
         xhr.addEventListener("readystatechange", function () {
-            if (this.readyState === 4 && (this.status === 200 || this.status == 201)) {
+            if (this.readyState === 4) {
                 if (this.status === 200 || this.status === 201) {
                     let res = JSON.parse(this.responseText);
                     console.log(res);
@@ -231,7 +231,6 @@ class Checkout extends Component {
             }
         });
         xhr.open("POST", this.props.baseUrl + "order");
-        xhr.timeout = 5;
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.setRequestHeader("Authorization", "Bearer eyJraWQiOiJhZGQ4N2Y2MS1kNTA5LTQyYjEtYjFhYy0wNzNkYTI1ODM1YzkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJmNjQ3YTAxNy1hMTM3LTQ1OGUtYWY1ZC04MGZkMTZjNDliNzgiLCJpc3MiOiJodHRwczovL0Zvb2RPcmRlcmluZ0FwcC5pbyIsImV4cCI6MTYxODI1MiwiaWF0IjoxNjE4MjIzfQ.zHL4st5QzCdluaQTLnNPZ_AbDW67dCV2n2ZvfptXjCcLlLZc3GMrjEt76ID1U4_J3X_ddvR6sKfkzEM6e0NFkw");
         xhr.send(JSON.stringify(ordermsg));
@@ -279,6 +278,7 @@ class Checkout extends Component {
 
         return (
             <div className="checkoutpage">
+                <Header />
                 <Stepper orientation="vertical" className="stepper" activeStep={this.state.step}>
                     <Step completed={this.state.delivery_completed}>
                         <StepLabel>Delivery</StepLabel>
@@ -291,7 +291,7 @@ class Checkout extends Component {
                                     </Tabs>
                                 </AppBar>
                                 <TabPanel value={this.state.currtab} index='one' className="tabpanel">
-                                    <GridList className="gridlist" cols={3} cellHeight={250}>
+                                    <GridList className={classes.gridlist} cols={3} cellHeight={250}>
                                         {this.state.addresses.addresses.map((address) => (
                                             <GridListTile classes={{ root: this.state.order_address_id === address.id && classes.gridtile }} key={address.id} >
                                                 <Typography>{address.flat_building_name}</Typography>
@@ -452,7 +452,7 @@ class Checkout extends Component {
                     open={this.state.openstatus}
                     onClose={(e) => this.handleClose()}
                     message={this.state.order_error === true ? "Unable to place your order! Please try again !" : "Order placed successfully. Your order id is " + this.state.order_id + "!"}
-                    autoHideDuration="4000"
+                    autoHideDuration={4000}
                     action={
                         <React.Fragment>
                             <IconButton size="small" aria-label="close" color="inherit" onClick={(e) => this.handleClose()}>
