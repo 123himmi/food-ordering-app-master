@@ -122,7 +122,11 @@ class Checkout extends Component {
     }
 
     componentWillMount() {
-        // Get upcoming movies
+        console.log("I am here");
+        this.loadAddress();
+    }
+
+    loadAddress() {
         let varAddresses = "";
         let that = this;
         let data = null;
@@ -251,10 +255,11 @@ class Checkout extends Component {
         let newaddress = {
             "city": this.state.new_city,
             "flat_building_name": this.state.new_flat_number,
-            "locality": this.state.locality,
+            "locality": this.state.new_locality,
             "pincode": this.state.new_pincode,
             "state_uuid": this.state.state_id
         };
+        console.log(newaddress);
         let xhr = new XMLHttpRequest();
         let that = this;
         this.setState({ loading: true });
@@ -263,6 +268,8 @@ class Checkout extends Component {
                 if (this.status === 200 || this.status === 201) {
                     let res = JSON.parse(this.responseText);
                     that.setState({loading:false});
+                    that.loadAddress();
+                    that.setState(prevstate => ({addresses: prevstate.addresses}));
                 }
             }
         });
@@ -337,7 +344,7 @@ class Checkout extends Component {
                                 </AppBar>
                                 <TabPanel value={this.state.currtab} index='one' className="tabpanel">
                                     <GridList className={classes.gridlist} cols={3} cellHeight={250}>
-                                        {this.state.addresses.length > 0 && this.state.addresses.addresses.map((address) => (
+                                        {this.state.addresses.addresses.map((address) => (
                                             <GridListTile classes={{ root: this.state.order_address_id === address.id && classes.gridtile }} key={address.id} >
                                                 <Typography>{address.flat_building_name}</Typography>
                                                 <Typography>{address.locality}</Typography>
@@ -386,7 +393,7 @@ class Checkout extends Component {
                                             className={classes.formControl}
                                         >
                                             {this.state.state_selected && this.state.states_array.states.map((state_i) => (
-                                                <MenuItem id={state_i.id} value={state_i.state_name}>{state_i.state_name}</MenuItem>
+                                                <MenuItem id={state_i.id} value={state_i.id}>{state_i.state_name}</MenuItem>
                                             ))}
                                         </Select>
                                         {this.state.state_id === "" &&
