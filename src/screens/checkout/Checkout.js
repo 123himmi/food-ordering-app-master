@@ -122,8 +122,8 @@ class Checkout extends Component {
     }
 
     componentWillMount() {
-        console.log("I am here");
         this.loadAddress();
+        console.log(this.state.addresses);
     }
 
     loadAddress() {
@@ -234,6 +234,8 @@ class Checkout extends Component {
                     console.log(res);
                     that.setState({ order_id: res.id, loading: false, order_complete: true, openstatus: true });
                 } else {
+                    let res = JSON.parse(this.responseText);
+                    console.log(res);
                     that.setState({ loading: false, order_complete: true, openstatus: true, order_error: true });
                 }
             }
@@ -344,7 +346,7 @@ class Checkout extends Component {
                                 </AppBar>
                                 <TabPanel value={this.state.currtab} index='one' className="tabpanel">
                                     <GridList className={classes.gridlist} cols={3} cellHeight={250}>
-                                        {this.state.addresses.addresses.map((address) => (
+                                        {(this.state.addresses.addresses || []).map((address) => (
                                             <GridListTile classes={{ root: this.state.order_address_id === address.id && classes.gridtile }} key={address.id} >
                                                 <Typography>{address.flat_building_name}</Typography>
                                                 <Typography>{address.locality}</Typography>
