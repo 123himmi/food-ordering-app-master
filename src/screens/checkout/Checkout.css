@@ -158,3 +158,15 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+  @media (max-width: 500px) {
+      .checkoutpage {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+      }
+      .ordersummary {
+          width: 80%;
+          padding-left: 10%;
+      }
+  }
