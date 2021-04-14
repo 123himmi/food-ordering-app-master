@@ -172,3 +172,37 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  @media (max-width: 500px) {
+  .imagecontainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+  }
+  .restaurantimage {
+      text-align: center;
+      width: 80%;
+  }
+  .restaurantdetails {
+      text-align: center;
+ }
+  .sellingmenu {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      align-items: flex-end;
+  }
+  .ratingandpricing {
+      display: flex;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+  }
+  .menu {
+      width: 80%;
+  }
+  .cart {
+      width: 80%;
+  }
+}
